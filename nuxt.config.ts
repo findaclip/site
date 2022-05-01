@@ -25,6 +25,11 @@ export default defineNuxtConfig({
         href: "/favicon-16x16.png",
       },
       { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#5bbad5" },
+    ],
+    meta: [
+      { name: "msapplication-TileColor", content: "#b91d47" },
+      { name: "theme-color", content: "#ffffff" },
     ],
   },
 
