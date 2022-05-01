@@ -1,9 +1,11 @@
 {
-  "private": true,
+  "name": "findaclip",
+  "version": "0.1.0",
+  "description": "A Nuxt3 project",
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt build",
-    "generate": "nuxt generate",
+    "dev": "ENV=dev nuxt dev",
+    "build": "ENV=production nuxt build",
+    "generate": "ENV=production nuxt generate",
     "preview": "nuxt preview",
     "analyze": "nuxt analyze",
     "test:unit": "vitest",
@@ -49,6 +51,8 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.1.8",
+    "@sentry/tracing": "^6.19.7",
+    "@sentry/vue": "^6.19.7",
     "pinia": "^2.0.13"
   },
   "lint-staged": {
