@@ -5,7 +5,6 @@ export default defineNuxtConfig({
   srcDir: "src/",
   buildModules: ["@pinia/nuxt", "@vueuse/nuxt", "nuxt-windicss"],
   modules: ["@nuxtjs/color-mode"],
-  publicRuntimeConfig: { ENV: process.env.NODE_ENV },
   head: {
     link: [
       {
