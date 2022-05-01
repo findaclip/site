@@ -1,62 +1,10 @@
-<br />
-<p align="center">
-  <a href="https://github.com/findaclip/site">
-    <img src="https://nuxtjs.org/design-kit/colored-logo.png" alt="Logo" width="100">
-  </a>
+# [Find a Clip](https://findaclip.netlify.app/) &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE) ![Github Actions](https://github.com/findaclip/site/actions/workflows/test.yaml/badge.svg) [![Netlify Status](https://api.netlify.com/api/v1/badges/3460f6dc-4274-4fea-9cbc-9abf5cf9505d/deploy-status)](https://app.netlify.com/sites/findaclip/deploys)
 
-<h3 align="center">Site</h3>
-
-  <p align="center">
-    Awesome site created by findaclip
-    <br />
-    <a href="https://github.com/findaclip/site"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <a href="https://findaclip.github.io/site/">View Demo</a>
-    ·
-    <a href="https://github.com/findaclip/site/issues/new?assignees=&labels=&template=bug_report.md&title=">Report Bug</a>
-    ·
-    <a href="https://github.com/findaclip/site/issues/new?assignees=&labels=&template=feature_request.md&title=">Request Feature</a>
-  </p>
-
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-    </li>
-    <li>
-      <a href="#installation">Installation</a>
-      <ul>
-        <li><a href="#for-development">For development</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#usage">Usage</a>
-      <ul>
-        <li><a href="#development-server">Development server</a></li>
-        <li><a href="#build">Build</a></li>
-        <li><a href="#running-unit-tests">Running unit tests</a></li>
-        <li><a href="#running-end-to-end-tests">Running end-to-end tests</a></li>
-      </ul>
-    </li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-  </ol>
-</details>
-
-<!-- ABOUT THE PROJECT -->
-
-## About The Project
-
-Awesome site created by findaclip.
-
-<!-- INSTALLATION -->
+This is a future description of my website that I will edit when I come up with something
 
 ## Installation
 
-The first step will be to clone the repo
+The first step will be to clone the repo:
 
 ```shell
 git clone https://github.com/findaclip/site.git
@@ -73,8 +21,6 @@ The requirements are:
    ```shell
    yarn
    ```
-
-<!-- USAGE EXAMPLES -->
 
 ## Usage
 
@@ -97,8 +43,6 @@ Run `yarn test:e2e` to execute the end-to-end tests via [Cypress](https://www.cy
 ## Contributing
 
 See [CONTRIBUTING.md](https://github.com/findaclip/site/blob/main/CONTRIBUTING.md) for ways to get started.
-
-<!-- LICENSE -->
 
 ## License
 
