@@ -32,6 +32,12 @@ jobs:
       - name: Build the project
         run: yarn build
 
+      - name: Upload build artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: .output/
+
       - name: Run unit and e2e tests
         run: |
           yarn test:unit:ci --coverage

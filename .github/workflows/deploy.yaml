@@ -30,7 +30,7 @@ jobs:
       # If the event is a pull request then set the deployment to preview.
       - uses: chrnorm/deployment-action@releases/v1
         if: github.event_name == 'pull_request'
-        name: Create GitHub production deployment
+        name: Create GitHub preview deployment
         id: dev_deployment
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -46,7 +46,7 @@ jobs:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       
       # Update the production deployment' state to success.
-      - uses: chrnorm/deployment-action@releases/v1
+      - uses: chrnorm/deployment-status@releases/v1
         if: github.event_name != 'pull_request'
         name: Update the production deployment' state
         with:
@@ -56,7 +56,7 @@ jobs:
           state: "success"
       
       # If the event is a pull request then set the deployment to preview.
-      - uses: chrnorm/deployment-action@releases/v1
+      - uses: chrnorm/deployment-status@releases/v1
         if: github.event_name == 'pull_request'
         name: Update the preview deployment' state
         with:
