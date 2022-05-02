@@ -21,7 +21,7 @@ jobs:
       - name: Get github sha
         id: sha
         run: |
-          echo ::set-output name=state::$([ ${{ github.event_name }} == "pull_request" ] \
+          echo ::set-output name=sha::$([ "${{ github.event_name }}" == "pull_request" ] \
            && echo "${{ github.event.pull_request.head.sha }}" || echo "${{ github.sha }}")          
       
       - name: Get netlify context
@@ -48,7 +48,7 @@ jobs:
       - name: Get state
         id: state
         run: |
-          echo ::set-output name=state::$([ ${{ steps.url.outputs.url }} == "failure" ] \
+          echo ::set-output name=state::$([ "${{ steps.url.outputs.url }}" == "failure" ] \
            && echo "failure" || echo "success")
       
       - uses: chrnorm/deployment-status@releases/v1
