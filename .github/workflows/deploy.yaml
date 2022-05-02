@@ -11,21 +11,40 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Wait for Netlify Deploy
-        id: waitForDeployment
+      - name: Wait for Netlify deployment
+        id: wait
         uses: probablyup/wait-for-netlify-action@3.2.0
         with:
           site_id: ${{ secrets.NETLIFY_SITE_ID }}
           max_timeout: 120
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      
-      - name: Deployment url
-        run: echo "${{ steps.waitForDeployment.outputs.url }}"
 
-      # - name: Update website screenshot
-      #   uses: benc-uk/workflow-dispatch@v1
-      #   with:
-      #     workflow: Screenshot
-      #     repo: findaclip/branding
-      #     token: ${{ secrets.PERSONAL_TOKEN }}
+      - name: Check deployment context
+        id: request
+        uses: satak/webrequest-action@master
+        with:
+          url: https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys/${{ steps.wait.outputs.deploy_id }}
+          method: GET
+
+      - name: Set deployment context
+        id: context
+        run: |
+          $output = '${{ steps.request.outputs.output }}' | ConvertFrom-Json
+          echo "::set-output name=context::$($($output.data.context))"
+      
+      - uses: chrnorm/deployment-action@releases/v1
+        if: ${{ steps.context.outputs.context }} == "production"
+        name: Create GitHub production deployment
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          target_url: https://findaclip.netlify.app/
+          environment: Production
+      
+      # Update the organizations's README profile.
+      - name: Update website screenshot
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Screenshot
+          repo: findaclip/branding
+          token: ${{ secrets.PERSONAL_TOKEN }}
