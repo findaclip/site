@@ -34,3 +34,6 @@ nuxt.d.ts
 *.njsproj
 *.sln
 *.sw?
+
+### Netlify
+.netlify/
