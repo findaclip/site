@@ -18,11 +18,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
+      - name: Get github sha
+        if: sha
+        run: |
+          echo ::set-output name=state::$([ ${{ github.event_name }} == "pull_request" ] \
+           && echo "${{ github.event.pull_request.head.sha }}" || echo "${{ github.sha }}")          
+      
       - name: Get netlify context
         id: context
         run: |
           echo ::set-output name=context::$(python .github/scripts/netlify.py \
-           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }} --context)
+           ${{ secrets.NETLIFY_SITE_ID }} ${{ steps.sha.outputs.sha }} --context)
 
       # If the event is not a pull request then set the deployment to production or else to preview.
       - uses: chrnorm/deployment-action@releases/v1
