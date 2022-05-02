@@ -17,54 +17,51 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
-      # If the event is not a pull request then set the deployment to production.
-      - uses: chrnorm/deployment-action@releases/v1
-        if: github.event_name != 'pull_request'
-        name: Create GitHub production deployment
-        id: prod_deployment
-        with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          environment: Production
-          ref: ${{ github.head_ref }}
       
-      # If the event is a pull request then set the deployment to preview.
+      - name: Get netlify context
+        id: context
+        run: |
+          echo ::set-output name=context::$(python .github/scripts/netlify.py
+           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }} --context)
+
+      # If the event is not a pull request then set the deployment to production or else to preview.
       - uses: chrnorm/deployment-action@releases/v1
-        if: github.event_name == 'pull_request'
-        name: Create GitHub preview deployment
-        id: dev_deployment
+        name: Create GitHub deployment
+        id: deployment
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          environment: Preview
+          environment: ${{ steps.context.outputs.context }}
           ref: ${{ github.head_ref }}
 
-      - name: Wait for Netlify deployment
-        uses: denar90/wait-for-netlify-action@v2.0.2
-        id: wait
-        with:
-          site_id: ${{ secrets.NETLIFY_SITE_ID }}
-          max_timeout: 120
+      - name: Get netlify url
+        id: url
+        run: |
+          echo ::set-output name=url::$(python .github/scripts/netlify.py
+           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }})
+
+      - name: Get state
+        id: state
+        run: |
+          echo ::set-output name=state::$([ ${{ steps.url.outputs.url }} == "failure" ]
+           && echo "failure" || echo "success")
       
-      # Update the production deployment' state to success.
       - uses: chrnorm/deployment-status@releases/v1
-        if: github.event_name != 'pull_request'
-        name: Update the production deployment' state
+        if: ${{ steps.state.outputs.state }} == "failure" || ${{ steps.url.outputs.url }} == ""
+        name: Update the deployment' state without url
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          target_url: https://findaclip.netlify.app/
-          deployment_id: ${{ steps.prod_deployment.outputs.deployment_id }}
-          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          state: ${{ steps.state.outputs.state }}
       
-      # If the event is a pull request then set the deployment to preview.
       - uses: chrnorm/deployment-status@releases/v1
-        if: github.event_name == 'pull_request'
-        name: Update the preview deployment' state
+        if: ${{ steps.state.outputs.state }} != "failure" || ${{ steps.url.outputs.url }} != ""
+        name: Update the deployment' state with url
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
-          target_url: ${{ steps.wait.outputs.url }}
-          environment_url: ${{ steps.wait.outputs.url }}
-          deployment_id: ${{ steps.dev_deployment.outputs.deployment_id }}
-          state: "success"
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+          target_url: ${{ steps.url.outputs.url }}
+          environment_url: ${{ steps.url.outputs.url }}
+          state: ${{ steps.state.outputs.state }}
 
       # Update the organizations's README profile only if the deployment is in production.
       - name: Update website screenshot
