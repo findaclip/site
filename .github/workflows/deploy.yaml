@@ -21,8 +21,8 @@ jobs:
       - name: Get netlify context
         id: context
         run: |
-          echo ::set-output name=context::$(python .github/scripts/netlify.py
-           "${{ secrets.NETLIFY_SITE_ID }}" "${{ github.sha }}" --context)
+          echo ::set-output name=context::$(python .github/scripts/netlify.py \
+           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }} --context)
 
       # If the event is not a pull request then set the deployment to production or else to preview.
       - uses: chrnorm/deployment-action@releases/v1
@@ -36,13 +36,13 @@ jobs:
       - name: Get netlify url
         id: url
         run: |
-          echo ::set-output name=url::$(python .github/scripts/netlify.py
-           "${{ secrets.NETLIFY_SITE_ID }}" "${{ github.sha }}")
+          echo ::set-output name=url::$(python .github/scripts/netlify.py \
+           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }})
 
       - name: Get state
         id: state
         run: |
-          echo ::set-output name=state::$([ ${{ steps.url.outputs.url }} == "failure" ]
+          echo ::set-output name=state::$([ ${{ steps.url.outputs.url }} == "failure" ] \
            && echo "failure" || echo "success")
       
       - uses: chrnorm/deployment-status@releases/v1
