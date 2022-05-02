@@ -46,6 +46,6 @@ try:
                 print(deploy["deploy_ssl_url"])
 except Exception as e:
     if switch:
-        print("Production")
+        print("Preview")
     else:
         print("failure")
