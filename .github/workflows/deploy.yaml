@@ -52,6 +52,7 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           target_url: https://findaclip.netlify.app/
+          environment_url: https://findaclip.netlify.app/
           deployment_id: ${{ steps.prod_deployment.outputs.deployment_id }}
           state: "success"
       
@@ -62,6 +63,7 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           target_url: ${{ steps.wait.outputs.url }}
+          environment_url: ${{ steps.wait.outputs.url }}
           deployment_id: ${{ steps.dev_deployment.outputs.deployment_id }}
           state: "success"
 
