@@ -23,23 +23,29 @@ def get_deploy(resp, sha):
         if deploy["commit_ref"] == sha:
             return deploy
 
-deploy = get_deploy(resp, sha)
-if switch:
-    if deploy["context"] == "production":
+try:
+    deploy = get_deploy(resp, sha)
+    if switch:
+        if deploy["context"] == "production":
+            print("Production")
+        else:
+            print("Preview")
+    else:
+        while deploy["state"] in ("uploading", "pending"):
+            deploy = get_deploy(resp, sha)
+            time.sleep(5)
+        
+        if deploy["state"] == "error":
+            print("failure")
+        else:
+            # Get the first part of the url. ex: https://main--findaclip.netlify.app -> main--findaclip
+            domain = deploy["deploy_ssl_url"].split(".")[0][7:]
+            if deploy["deploy_ssl_url"].startswith("https://main"):
+                print("")
+            else:
+                print(deploy["deploy_ssl_url"])
+except Exception as e:
+    if switch:
         print("Production")
     else:
-        print("Preview")
-else:
-    while deploy["state"] in ("uploading", "pending"):
-        deploy = get_deploy(resp, sha)
-        time.sleep(5)
-    
-    if deploy["state"] == "error":
         print("failure")
-    else:
-        # Get the first part of the url. ex: https://main--findaclip.netlify.app -> main--findaclip
-        domain = deploy["deploy_ssl_url"].split(".")[0][7:]
-        if deploy["deploy_ssl_url"].startswith("https://main"):
-            print("")
-        else:
-            print(deploy["deploy_ssl_url"])
