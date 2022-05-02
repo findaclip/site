@@ -26,6 +26,15 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           environment: Production
+      
+      # If the event is a pull request then set the deployment to preview.
+      - uses: chrnorm/deployment-action@releases/v1
+        if: github.event_name == 'pull_request'
+        name: Create GitHub production deployment
+        id: dev_deployment
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          environment: Preview
 
       - name: Wait for Netlify deployment
         id: wait
@@ -45,9 +54,20 @@ jobs:
           target_url: https://findaclip.netlify.app/
           deployment_id: ${{ steps.prod_deployment.outputs.deployment_id }}
           state: "success"
+      
+      # If the event is a pull request then set the deployment to preview.
+      - uses: chrnorm/deployment-action@releases/v1
+        if: github.event_name == 'pull_request'
+        name: Update the preview deployment' state
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          target_url: ${{ steps.wait.outputs.url }}
+          deployment_id: ${{ steps.dev_deployment.outputs.deployment_id }}
+          state: "success"
 
-      # Update the organizations's README profile.
+      # Update the organizations's README profile only if the deployment is in production.
       - name: Update website screenshot
+        if: github.event_name != 'pull_request'
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: Screenshot
