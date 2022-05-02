@@ -31,7 +31,7 @@ try:
         else:
             print("Preview")
     else:
-        while deploy["state"] in ("uploading", "pending"):
+        while deploy["state"] not in ("error", "success", "ready"):
             deploy = get_deploy(resp, sha)
             time.sleep(5)
         
