@@ -20,22 +20,20 @@ jobs:
           max_timeout: 120
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-
+      
       - name: Check deployment context
         id: request
-        uses: satak/webrequest-action@master
+        uses: fjogeleit/http-request-action@v1
         with:
-          url: https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys/${{ steps.wait.outputs.deploy_id }}
-          method: GET
+          url: "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys/${{ steps.wait.outputs.deploy_id }}"
+          method: "GET"
 
       - name: Set deployment context
-        id: context
         run: |
-          $output = '${{ steps.request.outputs.output }}' | ConvertFrom-Json
-          echo "::set-output name=context::$($($output.data.context))"
+          echo "${{ steps.request.outputs.response.context }}"
       
       - uses: chrnorm/deployment-action@releases/v1
-        if: ${{ steps.context.outputs.context }} == "production"
+        if: ${{ steps.request.outputs.response.context }} == "production"
         name: Create GitHub production deployment
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
