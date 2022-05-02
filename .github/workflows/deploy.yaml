@@ -22,12 +22,13 @@ jobs:
         run: yarn --frozen-lockfile --prefer-offline
 
       - name: Build the project
-        run: yarn build
+        run: NITRO_PRESET=netlify yarn build
       
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
-          publish-dir: "./.output/public"
+          publish-dir: "dist"
+          functions-dir: ".netlify/functions-internal"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: ${{ github.event.pull_request.title }}
