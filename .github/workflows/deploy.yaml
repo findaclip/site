@@ -11,35 +11,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Node 16
-        uses: actions/setup-node@v3
+      - name: Wait for Netlify Deploy
+        id: waitForDeployment
+        uses: probablyup/wait-for-netlify-action@3.2.0
         with:
-          node-version: '16.x'
-          cache: 'yarn'
-
-      # Install our dependencies if we did not restore a dependency cache.
-      - name: Install dependencies using yarn
-        run: yarn --frozen-lockfile --prefer-offline
-
-      - name: Build the project
-        run: NITRO_PRESET=netlify yarn build
-      
-      - name: Deploy to Netlify
-        uses: nwtgck/actions-netlify@v1.2
-        with:
-          publish-dir: "./dist"
-          functions-dir: "./.netlify/functionsadsdsad-internal"
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: ${{ github.event.pull_request.title }}
-          enable-commit-comment: false
+          site_id: ${{ secrets.NETLIFY_SITE_ID }}
+          max_timeout: 120
         env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      
+      - name: Deployment url
+        run: echo "${{ steps.waitForDeployment.outputs.url }}"
 
-      - name: Update website screenshot
-        uses: benc-uk/workflow-dispatch@v1
-        with:
-          workflow: Screenshot
-          repo: findaclip/branding
-          token: ${{ secrets.PERSONAL_TOKEN }}
+      # - name: Update website screenshot
+      #   uses: benc-uk/workflow-dispatch@v1
+      #   with:
+      #     workflow: Screenshot
+      #     repo: findaclip/branding
+      #     token: ${{ secrets.PERSONAL_TOKEN }}
