@@ -37,13 +37,11 @@ jobs:
           environment: Preview
 
       - name: Wait for Netlify deployment
+        uses: denar90/wait-for-netlify-action@v2.0.2
         id: wait
-        uses: probablyup/wait-for-netlify-action@3.2.0
         with:
           site_id: ${{ secrets.NETLIFY_SITE_ID }}
           max_timeout: 120
-        env:
-          NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       
       # Update the production deployment' state to success.
       - uses: chrnorm/deployment-status@releases/v1
@@ -52,7 +50,6 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           target_url: https://findaclip.netlify.app/
-          environment_url: https://findaclip.netlify.app/
           deployment_id: ${{ steps.prod_deployment.outputs.deployment_id }}
           state: "success"
       
