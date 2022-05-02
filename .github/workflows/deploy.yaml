@@ -22,7 +22,7 @@ jobs:
         id: context
         run: |
           echo ::set-output name=context::$(python .github/scripts/netlify.py
-           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }} --context)
+           "${{ secrets.NETLIFY_SITE_ID }}" "${{ github.sha }}" --context)
 
       # If the event is not a pull request then set the deployment to production or else to preview.
       - uses: chrnorm/deployment-action@releases/v1
@@ -37,7 +37,7 @@ jobs:
         id: url
         run: |
           echo ::set-output name=url::$(python .github/scripts/netlify.py
-           ${{ secrets.NETLIFY_SITE_ID }} ${{ github.sha }})
+           "${{ secrets.NETLIFY_SITE_ID }}" "${{ github.sha }}")
 
       - name: Get state
         id: state
