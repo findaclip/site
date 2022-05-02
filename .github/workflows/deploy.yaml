@@ -1,6 +1,12 @@
 name: Deploy
 
-on: [push, pull_request, workflow_dispatch]
+on: 
+  push:
+    branches:
+      - main
+
+  pull_request:
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -12,6 +18,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # If the event is not a pull request then set the deployment to production.
+      - uses: chrnorm/deployment-action@releases/v1
+        if: github.event_name != "pull_request"
+        name: Create GitHub production deployment
+        id: prod_deployment
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          environment: Production
+
       - name: Wait for Netlify deployment
         id: wait
         uses: probablyup/wait-for-netlify-action@3.2.0
@@ -21,25 +36,16 @@ jobs:
         env:
           NETLIFY_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       
-      - name: Check deployment context
-        id: request
-        uses: fjogeleit/http-request-action@v1
-        with:
-          url: "https://api.netlify.com/api/v1/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys/${{ steps.wait.outputs.deploy_id }}"
-          method: "GET"
-
-      - name: Set deployment context
-        run: |
-          echo "${{ steps.request.outputs.response.context }}"
-      
+      # Update the production deployment' state to success.
       - uses: chrnorm/deployment-action@releases/v1
-        if: ${{ steps.request.outputs.response.context }} == "production"
-        name: Create GitHub production deployment
+        if: github.event_name != "pull_request"
+        name: Update the production deployment' state
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           target_url: https://findaclip.netlify.app/
-          environment: Production
-      
+          deployment_id: ${{ steps.prod_deployment.outputs.deployment_id }}
+          state: "success"
+
       # Update the organizations's README profile.
       - name: Update website screenshot
         uses: benc-uk/workflow-dispatch@v1
