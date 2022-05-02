@@ -2,6 +2,7 @@ import argparse
 import json
 
 from urllib.request import urlopen
+import time
 
 parser = argparse.ArgumentParser(description="Get the current netlify preview url")
 parser.add_argument("site_id")
@@ -22,30 +23,27 @@ def get_deploy(resp, sha):
     for deploy in resp:
         if deploy["commit_ref"] == sha:
             return deploy
+    return resp[0]
 
-try:
-    deploy = get_deploy(resp, sha)
-    if switch:
-        if deploy["context"] == "production":
-            print("Production")
-        else:
-            print("Preview")
+deploy = get_deploy(resp, sha)
+if switch:
+    if deploy["context"] == "production":
+        print("Production")
     else:
-        while deploy["state"] not in ("error", "success", "ready"):
-            deploy = get_deploy(resp, sha)
-            time.sleep(5)
-        
-        if deploy["state"] == "error":
-            print("failure")
-        else:
-            # Get the first part of the url. ex: https://main--findaclip.netlify.app -> main--findaclip
-            domain = deploy["deploy_ssl_url"].split(".")[0][7:]
-            if deploy["deploy_ssl_url"].startswith("https://main"):
-                print("")
-            else:
-                print(deploy["deploy_ssl_url"])
-except Exception as e:
-    if switch:
         print("Preview")
-    else:
+else:
+    while deploy["state"] == "building":
+        with urlopen(url) as f:
+            resp = json.load(f)
+        deploy = get_deploy(resp, sha)
+        time.sleep(5)
+    
+    if deploy["state"] == "error":
         print("failure")
+    else:
+        # Get the first part of the url. ex: https://main--findaclip.netlify.app -> main--findaclip
+        domain = deploy["deploy_ssl_url"].split(".")[0][7:]
+        if deploy["deploy_ssl_url"].startswith("https://main"):
+            print("")
+        else:
+            print(deploy["deploy_ssl_url"])
