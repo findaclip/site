@@ -26,7 +26,7 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           environment: Production
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
       
       # If the event is a pull request then set the deployment to preview.
       - uses: chrnorm/deployment-action@releases/v1
@@ -36,7 +36,7 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           environment: Preview
-          ref: ${{ github.ref }}
+          ref: ${{ github.head_ref }}
 
       - name: Wait for Netlify deployment
         uses: denar90/wait-for-netlify-action@v2.0.2
