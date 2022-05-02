@@ -28,10 +28,10 @@ jobs:
         uses: nwtgck/actions-netlify@v1.2
         with:
           publish-dir: "./.output/public"
-          functions-dir: "./.output/server"
           production-branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: ${{ github.event.pull_request.title }}
+          enable-commit-comment: false
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
@@ -41,4 +41,4 @@ jobs:
         with:
           workflow: Screenshot
           repo: findaclip/branding
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PERSONAL_TOKEN }}
