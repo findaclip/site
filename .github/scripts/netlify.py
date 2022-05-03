@@ -19,6 +19,7 @@ switch = args.context
 with urlopen(url) as f:
     resp = json.load(f)
 
+
 def get_deploy(resp, sha):
     for deploy in resp:
         if deploy["commit_ref"] == sha:
@@ -37,11 +38,11 @@ else:
             resp = json.load(f)
         deploy = get_deploy(resp, sha)
         time.sleep(5)
-    
+
     if deploy["state"] == "error":
         print("failure")
     else:
-        # Get the first part of the url. ex: https://main--findaclip.netlify.app -> main--findaclip
+        # Get the first part of the url.
         domain = deploy["deploy_ssl_url"].split(".")[0][7:]
         if deploy["deploy_ssl_url"].startswith("https://main"):
             print("")

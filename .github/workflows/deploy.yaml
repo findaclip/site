@@ -52,7 +52,7 @@ jobs:
            && echo "failure" || echo "success")
       
       - uses: chrnorm/deployment-status@releases/v1
-        if: ${{ steps.state.outputs.state }} == "failure" || ${{ steps.url.outputs.url }} == ""
+        if: ${{ steps.state.outputs.state }} == "failure" || ${{ steps.context.outputs.context }} == "Production"
         name: Update the deployment' state without url
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
@@ -60,7 +60,7 @@ jobs:
           state: ${{ steps.state.outputs.state }}
       
       - uses: chrnorm/deployment-status@releases/v1
-        if: ${{ steps.state.outputs.state }} != "failure" || ${{ steps.url.outputs.url }} != ""
+        if: ${{ steps.state.outputs.state }} == "success" && ${{ steps.context.outputs.context }} == "Preview"
         name: Update the deployment' state with url
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
